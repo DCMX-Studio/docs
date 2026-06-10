@@ -1,0 +1,161 @@
+---
+title: "Next.js App Router"
+description: "Full gallery implementation with Next.js 14+ Server Components."
+---
+
+## Setup
+
+```bash terminal
+pnpm add @framalab/sdk
+```
+
+```env .env.local
+FRAMALAB_URL=https://panel.yourdomain.com
+FRAMALAB_TOKEN=your-gallery-token
+```
+
+## Singleton client
+
+```ts lib/framalab.ts
+import { createFramalabClient } from "@framalab/sdk"
+
+export const framalab = createFramalabClient({
+  baseUrl: process.env.FRAMALAB_URL!,
+  token: process.env.FRAMALAB_TOKEN!,
+})
+```
+
+## Gallery page
+
+```tsx app/gallery/page.tsx
+import { framalab } from "@/lib/framalab"
+import Image from "next/image"
+
+export default async function GalleryPage() {
+  const [project, photos] = await Promise.all([
+    framalab.getProject(),
+    framalab.getPhotos(),
+  ])
+
+  return (
+    <main>
+      <h1>{project.name}</h1>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        {photos.map((photo) => {
+          const thumb = photo.versions.find(v => v.versionType === "webp_thumb")
+          if (!thumb) return null
+          return (
+            <div key={photo.id} className="aspect-square overflow-hidden">
+              <Image
+                src={thumb.url}
+                alt=""
+                width={thumb.width ?? 400}
+                height={thumb.height ?? 400}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )
+        })}
+      </div>
+    </main>
+  )
+}
+```
+
+## Collections navigation
+
+```tsx app/gallery/collections/page.tsx
+import { framalab } from "@/lib/framalab"
+import Link from "next/link"
+
+export default async function CollectionsPage() {
+  const collections = await framalab.getCollections()
+
+  return (
+    <nav>
+      <ul className="flex gap-4">
+        {collections.map((col) => (
+          <li key={col.id}>
+            <Link href={`/gallery/collections/${col.id}`}>
+              {col.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+```
+
+## Collection detail page
+
+```tsx app/gallery/collections/[id]/page.tsx
+import { framalab } from "@/lib/framalab"
+import { FramalabError } from "@framalab/sdk"
+import Image from "next/image"
+import { notFound } from "next/navigation"
+
+export default async function CollectionPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+
+  let collection
+  try {
+    collection = await framalab.getCollection(id)
+  } catch (err) {
+    if (err instanceof FramalabError && err.status === 404) notFound()
+    throw err
+  }
+
+  return (
+    <main>
+      <h1>{collection.name}</h1>
+      <div className="columns-2 md:columns-3 gap-2">
+        {collection.photos.map((photo) => {
+          const medium = photo.versions.find(v => v.versionType === "webp_medium")
+          if (!medium) return null
+          return (
+            <Image
+              key={photo.id}
+              src={medium.url}
+              alt=""
+              width={medium.width ?? 1200}
+              height={medium.height ?? 800}
+              className="w-full mb-2"
+            />
+          )
+        })}
+      </div>
+    </main>
+  )
+}
+```
+
+## next.config.ts
+
+```ts next.config.ts
+import type { NextConfig } from "next"
+
+const panelHostname = new URL(process.env.FRAMALAB_URL!).hostname
+
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: panelHostname,
+      },
+    ],
+  },
+}
+
+export default nextConfig
+```
+
+<Tip>
+  All data fetching happens server-side — the gallery token is never sent to the browser.
+</Tip>

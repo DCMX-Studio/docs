@@ -1,0 +1,98 @@
+---
+title: "Get media url"
+description: "Build a URL for a photo with custom transformations: resize, format, and quality."
+---
+
+```ts
+const url = client.getMediaUrl(photoId, options?)
+```
+
+Synchronous — returns a URL string pointing to `/api/media/{photoId}` with your transform params as query string. On first access the server processes the image and caches the result permanently. Subsequent requests return the cached file.
+
+<Info>
+  This is the only SDK method that does **not** make a network request. It builds and returns a string immediately.
+</Info>
+
+## Parameters
+
+<ParamField path="photoId" type="string" required>
+  UUID of the photo. Obtain it from `getPhotos()` or `getCollection()`.
+</ParamField>
+
+<ParamField body="options" type="MediaUrlOptions">
+  Optional transform options. Server defaults apply when omitted.
+</ParamField>
+
+### MediaUrlOptions
+
+<ParamField body="w" type="number">
+  Target width in pixels (1–5000). Height scales proportionally unless `h` is also set.
+</ParamField>
+
+<ParamField body="h" type="number">
+  Target height in pixels (1–5000). Width scales proportionally unless `w` is also set.
+</ParamField>
+
+<ParamField body="format" default="webp" type="string">
+  Output format. One of `webp`, `jpeg`, or `avif`.
+</ParamField>
+
+<ParamField body="q" default={85} type="number">
+  Quality from 1 (lowest) to 100 (highest).
+</ParamField>
+
+<ParamField body="fit" default="cover" type="string">
+  Scaling mode when both `w` and `h` are provided.
+
+  | Value | Behavior |
+  | --- | --- |
+  | `cover` | Crops to fill the box exactly |
+  | `contain` | Letterboxes to fit within the box |
+  | `fill` | Stretches to fill the box exactly |
+</ParamField>
+
+## Returns
+
+A URL string, for example:
+
+```text
+https://panel.yourdomain.com/api/media/abc-123?w=800&format=webp&q=85
+```
+
+## Examples
+
+```ts transforms.ts
+// 800px wide at 75% quality
+const thumb = client.getMediaUrl(photo.id, { w: 800, q: 75 })
+
+// Square crop for a grid card
+const square = client.getMediaUrl(photo.id, { w: 600, h: 600, fit: "cover" })
+
+// AVIF for modern browsers
+const avif = client.getMediaUrl(photo.id, { w: 1200, format: "avif", q: 80 })
+
+// Open Graph image
+const og = client.getMediaUrl(photo.id, { w: 1200, h: 630, fit: "cover" })
+
+// No options — server defaults apply
+const url = client.getMediaUrl(photo.id)
+```
+
+## Caching
+
+The server stores the transformed image after the first request. All subsequent calls with the same params skip processing entirely.
+
+```text
+Cache-Control: public, max-age=31536000, immutable
+```
+
+## Pre-generated versions vs. getMediaUrl
+
+| Situation | Approach |
+| --- | --- |
+| Standard grid / detail / download sizes | `photo.versions.find(v => v.versionType === "webp_thumb")?.url` |
+| Custom size or crop | `client.getMediaUrl(photo.id, { w: 400 })` |
+| AVIF output | `client.getMediaUrl(photo.id, { format: "avif" })` |
+| OG / social preview crop | `client.getMediaUrl(photo.id, { w: 1200, h: 630, fit: "cover" })` |
+
+Pre-generated URLs are always fastest for their target sizes. Use `getMediaUrl` only when the three built-in versions don't cover your case.

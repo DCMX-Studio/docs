@@ -1,0 +1,89 @@
+---
+title: "Authentication"
+description: "How gallery tokens work and how to manage them."
+---
+
+The Gallery API uses token-based authentication. Each project has its own gallery token and the SDK attaches it automatically via `X-Gallery-Token` on every request.
+
+## Generating a token
+
+<Steps>
+  <Step title="Open the project in the panel">
+    Navigate to your project and go to **Settings → Gallery**.
+  </Step>
+  <Step title="Generate a token">
+    Click **Generate token**.
+  </Step>
+  <Step title="Copy it immediately">
+    The token is shown only once. The panel stores only the SHA-256 hash — there is no way to retrieve the original value later.
+  </Step>
+</Steps>
+
+<Warning>
+  If you lose the token, you must revoke it and generate a new one.
+</Warning>
+
+A token looks like a 64-character hex string:
+
+```text
+a3f8b2c4d1e9f07a6b5c8d2e4f0a1b3c5d7e9f2a4b6c8d0e2f4a6b8c0d2e4f6
+```
+
+## Using the token
+
+Pass it to `createFramalabClient` at initialization:
+
+Store both values as environment variables.
+
+```env .env.local
+FRAMALAB_URL=https://panel.yourdomain.com
+FRAMALAB_TOKEN=your-gallery-token
+```
+
+```ts client.ts
+import { createFramalabClient } from "@framalab/sdk"
+
+const client = createFramalabClient({
+  baseUrl: process.env.FRAMALAB_URL!,
+  token: process.env.FRAMALAB_TOKEN!,
+})
+```
+
+The SDK attaches `X-Gallery-Token: <token>` to every request automatically.
+
+## Storing the token
+
+<Note>
+  Treat gallery tokens like API keys — do not commit them to source control.
+</Note>
+
+| Stack | Recommended storage |
+| --- | --- |
+| Next.js | `.env.local` / Vercel environment variables |
+| Astro | `.env` / platform environment variables |
+| Docker | Secrets or runtime env injection |
+| Netlify / Cloudflare Pages | Platform environment variables |
+
+As long as data fetching happens server-side (Server Components, SSG, SSR), the token never reaches the browser.
+
+## Token lifecycle
+
+| Property | Behavior |
+| --- | --- |
+| **Scope** | Bound to a single project |
+| **Expiration** | Optional `expiresAt`. Expired tokens return `401`. |
+| **Revocation** | Can be revoked from the panel at any time |
+| **Multiple tokens** | A project can have multiple active tokens simultaneously |
+
+## Error when the token is invalid
+
+```json
+{
+  "error": {
+    "message": "Unauthorized",
+    "code": "UNAUTHORIZED"
+  }
+}
+```
+
+HTTP `401`. See [Error Handling](/concepts/error-handling) for how to catch this in code.

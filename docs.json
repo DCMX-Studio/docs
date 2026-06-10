@@ -1,0 +1,65 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "almond",
+  "name": "Framalab",
+  "colors": {
+    "primary": "#1A1A2E",
+    "light": "#4F4FBF",
+    "dark": "#0D0D1A"
+  },
+  "favicon": "https://icons.duckduckgo.com/ip3/framalab.dcmxstudio.com.ico",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "get-started/introduction",
+              "get-started/quickstart"
+            ]
+          },
+          {
+            "group": "SDK Reference",
+            "pages": [
+              "sdk/create-framalab-client",
+              "sdk/get-project",
+              "sdk/get-photos",
+              "sdk/get-collections",
+              "sdk/get-media-url"
+            ]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "concepts/authentication",
+              "concepts/photo-versions",
+              "concepts/error-handling"
+            ]
+          },
+          {
+            "group": "Examples",
+            "pages": [
+              "examples/nextjs",
+              "examples/astro"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:support@dcmxstudio.com"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Go to Framalab",
+      "href": "https://framalab.dcmxstudio.com"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+---
+title: "Create Framalab Client"
+description: "Initialize the SDK client with your gallery token and panel URL."
+---
+
+```ts
+import { createFramalabClient } from "@framalab/sdk"
+
+const client = createFramalabClient(options)
+```
+
+## Options
+
+<ParamField body="baseUrl" type="string" required>
+  The base URL of your Framalab panel. Trailing slashes are stripped automatically.
+</ParamField>
+
+<ParamField body="token" type="string" required>
+  The gallery token for a specific project. Sent as `X-Gallery-Token` on every request. See [Authentication](/concepts/authentication) to generate one.
+</ParamField>
+
+## Returns
+
+A `FramalabClient` object with these methods:
+
+| Method | Returns | Async |
+| --- | --- | --- |
+| `getProject()` | `GalleryProject` | Yes |
+| `getPhotos()` | `GalleryPhoto[]` | Yes |
+| `getCollections()` | `GalleryCollection[]` | Yes |
+| `getCollection(id)` | `GalleryCollectionDetail` | Yes |
+| `getMediaUrl(photoId, opts?)` | `string` | **No** |
+
+## Singleton pattern
+
+The client is a plain object — no connection is opened at creation time. Initialize once and reuse across your app.
+
+```ts lib/framalab.ts
+import { createFramalabClient } from "@framalab/sdk"
+
+export const framalab = createFramalabClient({
+  baseUrl: process.env.FRAMALAB_URL!,
+  token: process.env.FRAMALAB_TOKEN!,
+})
+```
+
+```ts app.ts
+import { framalab } from "@/lib/framalab"
+
+const photos = await framalab.getPhotos()
+```

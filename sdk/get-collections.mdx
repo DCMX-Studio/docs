@@ -1,0 +1,80 @@
+---
+title: "Get collections"
+description: "List all collections, or fetch a single collection with its photos."
+---
+
+## getCollections
+
+```ts
+const collections = await client.getCollections()
+```
+
+Returns the list of collections for the project ordered by creation date. Does **not** include photos — use `getCollection(id)` to get those.
+
+### Parameters
+
+None.
+
+### Returns
+
+```ts
+interface GalleryCollection {
+  id:        string  // UUID
+  name:      string  // e.g. "Ceremony"
+  createdAt: string  // ISO-8601
+}
+```
+
+### Example
+
+```ts nav.ts
+const collections = await client.getCollections()
+
+for (const col of collections) {
+  renderNavItem({ href: `/collections/${col.id}`, label: col.name })
+}
+```
+
+---
+
+## getCollection
+
+```ts
+const collection = await client.getCollection(id)
+```
+
+Returns a single collection with all its approved photos, sorted by position within the collection.
+
+### Parameters
+
+<ParamField path="id" type="string" required>
+  UUID of the collection. Obtain it from `getCollections()`.
+</ParamField>
+
+### Returns
+
+```ts
+interface GalleryCollectionDetail extends GalleryCollection {
+  photos: GalleryPhoto[]  // Same shape as getPhotos()
+}
+```
+
+### Example
+
+```ts collection-page.ts
+const collections = await client.getCollections()
+const first = collections[0]
+
+if (first) {
+  const detail = await client.getCollection(first.id)
+  console.log(`${detail.name}: ${detail.photos.length} photos`)
+}
+```
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 401 | `UNAUTHORIZED` | Token invalid |
+| 404 | `NOT_FOUND` | Collection not found (`getCollection` only) |
+| 500 | `INTERNAL_ERROR` | Server error |

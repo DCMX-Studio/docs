@@ -1,0 +1,57 @@
+---
+title: "Introduction"
+description: "Framalab SDK gives you typed, zero-dependency access to a project's approved photos so you can build any gallery frontend you want."
+---
+
+Framalab is a photographer management platform. The **SDK** is the public-facing layer — it wraps the Gallery API and lets you build your gallery frontend in any stack.
+
+<Info>
+  The panel is where the photographer curates work. The gallery is whatever **you** build with this SDK.
+</Info>
+
+## How it works
+
+<Steps>
+  <Step title="Photographer curates">
+    The photographer uploads photos and marks approved ones in the Framalab panel.
+  </Step>
+  <Step title="Gallery API exposes them">
+    Approved photos become available through the Gallery API, authenticated with a token.
+  </Step>
+  <Step title="You build the frontend">
+    Use the SDK to fetch photos, collections, and metadata. Render however you want.
+  </Step>
+</Steps>
+
+## What you can do
+
+- Fetch project metadata (name, type, status)
+- List all approved photos with their pre-generated WebP versions
+- Browse photo collections
+- Generate transformed image URLs (resize, format, quality)
+
+## What this SDK is NOT
+
+- It does **not** handle client proofing or selections — that's the client panel
+- It does **not** upload or manage photos — that's the admin panel
+- It has **no UI components** — you own the rendering
+
+## Package
+
+`@framalab/sdk` ships with **zero runtime dependencies**. It uses native `fetch` and is fully typed with TypeScript.
+
+```ts
+import { createFramalabClient } from "@framalab/sdk"
+```
+
+## Next steps
+
+<CardGroup>
+  <Card title="Quickstart" icon="bolt" href="/get-started/quickstart">
+    Fetch your first photo in under 5 minutes
+  </Card>
+
+  <Card title="Authentication" icon="key" href="/concepts/authentication">
+    Understand gallery tokens
+  </Card>
+</CardGroup>

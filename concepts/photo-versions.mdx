@@ -1,0 +1,76 @@
+---
+title: "Photo versions"
+description: "The three pre-generated WebP versions available for every approved photo."
+---
+
+Every approved photo has up to three pre-generated WebP versions created automatically during upload processing.
+
+## The three versions
+
+| `versionType` | Max dimension | Quality | Best for |
+| --- | --- | --- | --- |
+| `webp_thumb` | 400px wide | 75 | Grid thumbnails, cards |
+| `webp_medium` | 1200px wide | 85 | Detail views, lightbox |
+| `webp_full` | 2400px wide | 90 | Downloads, large displays |
+
+<Note>
+  Dimensions are maximum — images are never upscaled. A 300px original produces a `webp_thumb` of 300px, not 400px.
+</Note>
+
+## Accessing version URLs
+
+```ts versions.ts
+const photos = await client.getPhotos()
+
+for (const photo of photos) {
+  const thumb  = photo.versions.find(v => v.versionType === "webp_thumb")
+  const medium = photo.versions.find(v => v.versionType === "webp_medium")
+  const full   = photo.versions.find(v => v.versionType === "webp_full")
+
+  // Always guard — a version may be absent if processing hasn't finished
+  if (thumb) console.log(thumb.url, thumb.width, thumb.height, thumb.sizeBytes)
+}
+```
+
+## Responsive images with srcset
+
+```ts srcset.ts
+function buildSrcSet(photo: GalleryPhoto): string {
+  return photo.versions
+    .filter(v => ["webp_thumb", "webp_medium", "webp_full"].includes(v.versionType))
+    .map(v => `${v.url} ${v.width}w`)
+    .join(", ")
+}
+```
+
+```html responsive.html
+<img
+  src="{medium.url}"
+  srcset="{buildSrcSet(photo)}"
+  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+  width="{medium.width}"
+  height="{medium.height}"
+  alt=""
+/>
+```
+
+## Version availability
+
+Versions are generated asynchronously after upload. A newly approved photo may briefly have an empty `versions` array. In a published gallery all versions should be ready.
+
+## When to use getMediaUrl instead
+
+Use [`getMediaUrl()`](/sdk/get-media-url) when you need:
+
+- A size not covered by the three standard versions
+- AVIF output (not pre-generated)
+- A specific crop ratio (e.g. 1:1 square, 1200x630 OG)
+- Custom quality for a specific context
+
+```ts decision.ts
+// Pre-generated: instant, no server processing
+const url = photo.versions.find(v => v.versionType === "webp_thumb")?.url
+
+// On-demand: flexible, first request slightly slower (then permanently cached)
+const url = client.getMediaUrl(photo.id, { w: 400, format: "avif" })
+```

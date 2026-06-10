@@ -1,0 +1,112 @@
+---
+title: "Astro"
+description: "Build a fully static gallery with Astro — everything fetched at build time."
+---
+
+## Setup
+
+```bash terminal
+pnpm add @framalab/sdk
+```
+
+```env .env
+FRAMALAB_URL=https://panel.yourdomain.com
+FRAMALAB_TOKEN=your-gallery-token
+```
+
+## Gallery index
+
+```astro src/pages/index.astro
+---
+import { createFramalabClient } from "@framalab/sdk"
+
+const client = createFramalabClient({
+  baseUrl: import.meta.env.FRAMALAB_URL,
+  token: import.meta.env.FRAMALAB_TOKEN,
+})
+
+const [project, photos] = await Promise.all([
+  client.getProject(),
+  client.getPhotos(),
+])
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{project.name}</title>
+  </head>
+  <body>
+    <h1>{project.name}</h1>
+    <div class="grid">
+      {photos.map((photo) => {
+        const thumb = photo.versions.find(v => v.versionType === "webp_thumb")
+        return thumb ? (
+          <img
+            src={thumb.url}
+            width={thumb.width ?? 400}
+            height={thumb.height ?? 400}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ) : null
+      })}
+    </div>
+  </body>
+</html>
+```
+
+## Collection pages (dynamic routes)
+
+```astro src/pages/collections/[id].astro
+---
+import { createFramalabClient } from "@framalab/sdk"
+
+export async function getStaticPaths() {
+  const client = createFramalabClient({
+    baseUrl: import.meta.env.FRAMALAB_URL,
+    token: import.meta.env.FRAMALAB_TOKEN,
+  })
+  const collections = await client.getCollections()
+  return collections.map((col) => ({ params: { id: col.id } }))
+}
+
+const { id } = Astro.params
+const client = createFramalabClient({
+  baseUrl: import.meta.env.FRAMALAB_URL,
+  token: import.meta.env.FRAMALAB_TOKEN,
+})
+const collection = await client.getCollection(id)
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{collection.name}</title>
+  </head>
+  <body>
+    <h1>{collection.name}</h1>
+    <p>{collection.photos.length} photos</p>
+    <div class="masonry">
+      {collection.photos.map((photo) => {
+        const medium = photo.versions.find(v => v.versionType === "webp_medium")
+        return medium ? (
+          <img
+            src={medium.url}
+            width={medium.width ?? 1200}
+            height={medium.height ?? 800}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ) : null
+      })}
+    </div>
+  </body>
+</html>
+```
+
+<Tip>
+  All fetches run at build time. The gallery token never reaches the browser.
+</Tip>

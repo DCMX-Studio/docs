@@ -1,0 +1,58 @@
+{
+  "projectType": "saas",
+  "projectName": "Framalab",
+  "projectDescription": "Framalab is a creative SaaS platform that lets users access and manage design projects through a seamless, passwordless login experience.",
+  "theme": "almond",
+  "primaryColor": "#1A1A2E",
+  "lightColor": "#4F4FBF",
+  "darkColor": "#0D0D1A",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "account-setup"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/workspace",
+              "concepts/projects",
+              "concepts/collaboration"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/creating-a-project",
+              "guides/sharing-and-permissions",
+              "guides/exporting-assets",
+              "guides/managing-your-account"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "faq",
+              "troubleshooting"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Passwordless magic-link authentication",
+    "Project and asset management",
+    "Team collaboration and sharing",
+    "Asset export and delivery",
+    "Workspace organization"
+  ],
+  "publicApiSurface": []
+}

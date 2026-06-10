@@ -1,0 +1,75 @@
+---
+title: "Get photos"
+description: "Fetch all approved photos in the project."
+---
+
+```ts
+const photos = await client.getPhotos()
+```
+
+Returns every photo in the project that has been approved by the photographer. Sorted by `position` ascending, then `createdAt` ascending.
+
+<Info>
+  Only photos with `status = "approved"` are returned. Rejected, unselected, or in-progress photos are never exposed through the gallery API.
+</Info>
+
+## Parameters
+
+None.
+
+## Returns
+
+```ts
+interface GalleryPhoto {
+  id:        string
+  position:  number | null         // Display order (lower = first)
+  createdAt: string                // ISO-8601
+  versions:  GalleryPhotoVersion[]
+}
+
+interface GalleryPhotoVersion {
+  id:          string
+  versionType: string         // "webp_thumb" | "webp_medium" | "webp_full"
+  url:         string         // Direct URL to the stored file
+  mimeType:    string         // "image/webp"
+  width:       number | null
+  height:      number | null
+  sizeBytes:   number | null
+}
+```
+
+## Version types
+
+| `versionType` | Max dimension | Best for |
+| --- | --- | --- |
+| `webp_thumb` | 400px wide | Grid thumbnails, cards |
+| `webp_medium` | 1200px wide | Detail views, lightbox |
+| `webp_full` | 2400px wide | Downloads, large displays |
+
+See [Photo Versions](/concepts/photo-versions) for the full guide.
+
+## Example
+
+```ts grid.ts
+const photos = await client.getPhotos()
+
+// Render a grid using thumbs
+for (const photo of photos) {
+  const thumb = photo.versions.find(v => v.versionType === "webp_thumb")
+  if (thumb) renderThumbnail(thumb.url, thumb.width, thumb.height)
+}
+
+// Pick the largest available version for a lightbox
+function getLightboxUrl(photo: GalleryPhoto): string {
+  const full   = photo.versions.find(v => v.versionType === "webp_full")
+  const medium = photo.versions.find(v => v.versionType === "webp_medium")
+  return (full ?? medium)?.url ?? ""
+}
+```
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 401 | `UNAUTHORIZED` | Token missing, invalid, revoked, or expired |
+| 500 | `INTERNAL_ERROR` | Server error |

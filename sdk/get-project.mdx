@@ -1,0 +1,45 @@
+---
+title: "Get project"
+description: "Fetch metadata about the project associated with your gallery token."
+---
+
+```ts
+const project = await client.getProject()
+```
+
+Returns metadata for the project tied to your gallery token. Useful for rendering the project title, type, or status.
+
+## Parameters
+
+None.
+
+## Returns
+
+```ts
+interface GalleryProject {
+  id:        string  // UUID
+  name:      string  // e.g. "Ana & Carlos Wedding"
+  type:      string  // "wedding" | "quinceañera" | "corporate" | "portrait" | "other"
+  status:    string  // "preparing" | "proofing" | "editing" | "review" | "delivered" | "closed"
+  createdAt: string  // ISO-8601
+  updatedAt: string  // ISO-8601
+}
+```
+
+## Example
+
+```ts example.ts
+const project = await client.getProject()
+
+console.log(project.name)    // "Ana & Carlos Wedding"
+console.log(project.type)    // "wedding"
+console.log(project.status)  // "delivered"
+```
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 401 | `UNAUTHORIZED` | Token missing, invalid, revoked, or expired |
+| 404 | `NOT_FOUND` | Project no longer exists |
+| 500 | `INTERNAL_ERROR` | Server error |

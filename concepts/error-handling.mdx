@@ -1,0 +1,102 @@
+---
+title: "Error handling"
+description: "Handle SDK errors using the FramalabError class."
+---
+
+All four async SDK methods throw a `FramalabError` on non-2xx responses.
+
+## FramalabError
+
+```ts
+import { FramalabError } from "@framalab/sdk"
+
+class FramalabError extends Error {
+  status: number  // HTTP status code
+  code:   string  // API error code
+}
+```
+
+## Basic pattern
+
+```ts error-handling.ts
+import { FramalabError, createFramalabClient } from "@framalab/sdk"
+
+const client = createFramalabClient({ baseUrl, token })
+
+try {
+  const photos = await client.getPhotos()
+  render(photos)
+} catch (err) {
+  if (err instanceof FramalabError) {
+    switch (err.status) {
+      case 401:
+        console.error("Gallery token is invalid or expired")
+        break
+      case 404:
+        console.error("Gallery not found")
+        break
+      default:
+        console.error(err.code, err.message, err.status)
+    }
+  } else {
+    throw err // Re-throw unexpected errors
+  }
+}
+```
+
+## Error codes
+
+| HTTP | Code | Meaning |
+| --- | --- | --- |
+| 401 | `UNAUTHORIZED` | Token missing, invalid, revoked, or expired |
+| 404 | `NOT_FOUND` | Project or collection doesn't exist |
+| 422 | `VALIDATION_ERROR` | Invalid parameters |
+| 500 | `INTERNAL_ERROR` | Server-side error |
+
+## Network errors
+
+If `fetch` itself fails (DNS, timeout, offline), the SDK re-throws the native `TypeError` — not a `FramalabError`. Handle both:
+
+```ts network.ts
+try {
+  await client.getPhotos()
+} catch (err) {
+  if (err instanceof FramalabError) {
+    // API error — status and code available
+    handleApiError(err.status, err.code)
+  } else if (err instanceof TypeError) {
+    // Network-level failure — no HTTP status
+    handleNetworkError()
+  }
+}
+```
+
+## Next.js error boundary
+
+```tsx app/gallery/error.tsx
+"use client"
+
+import { useEffect } from "react"
+import { FramalabError } from "@framalab/sdk"
+
+export default function GalleryError({
+  error,
+  reset,
+}: {
+  error: Error
+  reset: () => void
+}) {
+  useEffect(() => {
+    if (error instanceof FramalabError && error.status === 401) {
+      console.warn("Gallery token invalid — check environment variables")
+    }
+  }, [error])
+
+  return (
+    <div>
+      <h2>Could not load gallery</h2>
+      <button onClick={reset}>Try again</button>
+    </div>
+  )
+}
+```

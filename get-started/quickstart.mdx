@@ -1,0 +1,113 @@
+---
+title: "Quickstart"
+description: "Fetch your first photo in under 5 minutes."
+---
+
+## Prerequisites
+
+- A Framalab account with at least one project that has approved photos
+- A gallery token — see [Authentication](/concepts/authentication)
+
+## 1. Install
+
+<CodeGroup>
+
+```bash pnpm
+pnpm add @framalab/sdk
+```
+
+```bash npm
+npm install @framalab/sdk
+```
+
+```bash yarn
+yarn add @framalab/sdk
+```
+
+</CodeGroup>
+
+## 2. Initialize the client
+
+Store both values as environment variables — never hardcode them in source.
+
+```env .env.local
+FRAMALAB_URL=https://panel.yourdomain.com
+FRAMALAB_TOKEN=your-gallery-token
+```
+
+```ts client.ts
+import { createFramalabClient } from "@framalab/sdk"
+
+const client = createFramalabClient({
+  baseUrl: process.env.FRAMALAB_URL!,
+  token: process.env.FRAMALAB_TOKEN!,
+})
+```
+
+## 3. Fetch photos
+
+```ts fetch-photos.ts
+const photos = await client.getPhotos()
+
+for (const photo of photos) {
+  const thumb = photo.versions.find(v => v.versionType === "webp_thumb")
+  console.log(photo.id, thumb?.url)
+}
+```
+
+## 4. Render (vanilla JS)
+
+<Warning>
+  This example runs entirely in the browser and is for illustration only. In production, never expose `FRAMALAB_TOKEN` client-side — fetch data server-side (SSR, SSG, or a server route) so the token stays on the server.
+</Warning>
+
+```html index.html
+<!DOCTYPE html>
+<html>
+<body>
+  <div id="gallery"></div>
+
+  <script type="module">
+    import { createFramalabClient } from "@framalab/sdk"
+
+    const client = createFramalabClient({
+      baseUrl: "https://panel.yourdomain.com",
+      token: "your-gallery-token", // illustration only — use server-side in production
+    })
+
+    const photos = await client.getPhotos()
+    const gallery = document.getElementById("gallery")
+
+    for (const photo of photos) {
+      const version = photo.versions.find(v => v.versionType === "webp_medium")
+      if (!version) continue
+      const img = document.createElement("img")
+      img.src = version.url
+      img.width = version.width ?? 1200
+      img.height = version.height ?? 800
+      gallery.appendChild(img)
+    }
+  </script>
+</body>
+</html>
+```
+
+<Check>
+  You should see all approved photos from your project rendered in the page.
+</Check>
+
+## Next steps
+
+<CardGroup>
+  <Card title="Photo Versions" icon="images" href="/concepts/photo-versions">
+    thumb vs medium vs full — when to use each
+  </Card>
+
+  <Card title="getMediaUrl" icon="wand-magic-sparkles" href="/sdk/get-media-url">
+    Custom resize, format, and quality transforms
+  </Card>
+
+  <Card title="Error Handling" icon="triangle-exclamation" href="/concepts/error-handling">
+    Handle auth and server errors gracefully
+  </Card>
+</CardGroup>
