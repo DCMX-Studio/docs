@@ -1,5 +1,5 @@
 ---
-title: "Error handling"
+title: "Error Handling"
 description: "Handle SDK errors using the FramalabError class."
 ---
 
@@ -8,7 +8,7 @@ All four async SDK methods throw a `FramalabError` on non-2xx responses.
 ## FramalabError
 
 ```ts
-import { FramalabError } from "@framalab/sdk"
+import { FramalabError } from "@dcmx-studio/framalab-sdk"
 
 class FramalabError extends Error {
   status: number  // HTTP status code
@@ -19,7 +19,7 @@ class FramalabError extends Error {
 ## Basic pattern
 
 ```ts error-handling.ts
-import { FramalabError, createFramalabClient } from "@framalab/sdk"
+import { FramalabError, createFramalabClient } from "@dcmx-studio/framalab-sdk"
 
 const client = createFramalabClient({ baseUrl, token })
 
@@ -47,7 +47,7 @@ try {
 ## Error codes
 
 | HTTP | Code | Meaning |
-| --- | --- | --- |
+|------|------|---------|
 | 401 | `UNAUTHORIZED` | Token missing, invalid, revoked, or expired |
 | 404 | `NOT_FOUND` | Project or collection doesn't exist |
 | 422 | `VALIDATION_ERROR` | Invalid parameters |
@@ -77,7 +77,7 @@ try {
 "use client"
 
 import { useEffect } from "react"
-import { FramalabError } from "@framalab/sdk"
+import { FramalabError } from "@dcmx-studio/framalab-sdk"
 
 export default function GalleryError({
   error,

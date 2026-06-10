@@ -1,5 +1,5 @@
 ---
-title: "Get project"
+title: "getProject"
 description: "Fetch metadata about the project associated with your gallery token."
 ---
 
@@ -39,7 +39,7 @@ console.log(project.status)  // "delivered"
 ## Errors
 
 | Status | Code | Cause |
-| --- | --- | --- |
+|--------|------|-------|
 | 401 | `UNAUTHORIZED` | Token missing, invalid, revoked, or expired |
 | 404 | `NOT_FOUND` | Project no longer exists |
 | 500 | `INTERNAL_ERROR` | Server error |

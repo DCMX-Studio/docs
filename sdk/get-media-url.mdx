@@ -1,5 +1,5 @@
 ---
-title: "Get media url"
+title: "getMediaUrl"
 description: "Build a URL for a photo with custom transformations: resize, format, and quality."
 ---
 
@@ -33,19 +33,19 @@ Synchronous — returns a URL string pointing to `/api/media/{photoId}` with you
   Target height in pixels (1–5000). Width scales proportionally unless `w` is also set.
 </ParamField>
 
-<ParamField body="format" default="webp" type="string">
+<ParamField body="format" type="string" default="webp">
   Output format. One of `webp`, `jpeg`, or `avif`.
 </ParamField>
 
-<ParamField body="q" default={85} type="number">
+<ParamField body="q" type="number" default={85}>
   Quality from 1 (lowest) to 100 (highest).
 </ParamField>
 
-<ParamField body="fit" default="cover" type="string">
+<ParamField body="fit" type="string" default="cover">
   Scaling mode when both `w` and `h` are provided.
 
   | Value | Behavior |
-  | --- | --- |
+  |-------|----------|
   | `cover` | Crops to fill the box exactly |
   | `contain` | Letterboxes to fit within the box |
   | `fill` | Stretches to fill the box exactly |
@@ -55,7 +55,7 @@ Synchronous — returns a URL string pointing to `/api/media/{photoId}` with you
 
 A URL string, for example:
 
-```text
+```
 https://panel.yourdomain.com/api/media/abc-123?w=800&format=webp&q=85
 ```
 
@@ -82,14 +82,14 @@ const url = client.getMediaUrl(photo.id)
 
 The server stores the transformed image after the first request. All subsequent calls with the same params skip processing entirely.
 
-```text
+```
 Cache-Control: public, max-age=31536000, immutable
 ```
 
 ## Pre-generated versions vs. getMediaUrl
 
 | Situation | Approach |
-| --- | --- |
+|-----------|----------|
 | Standard grid / detail / download sizes | `photo.versions.find(v => v.versionType === "webp_thumb")?.url` |
 | Custom size or crop | `client.getMediaUrl(photo.id, { w: 400 })` |
 | AVIF output | `client.getMediaUrl(photo.id, { format: "avif" })` |

@@ -6,7 +6,7 @@ description: "Build a fully static gallery with Astro — everything fetched at 
 ## Setup
 
 ```bash terminal
-pnpm add @framalab/sdk
+pnpm add @dcmx-studio/framalab-sdk
 ```
 
 ```env .env
@@ -18,7 +18,7 @@ FRAMALAB_TOKEN=your-gallery-token
 
 ```astro src/pages/index.astro
 ---
-import { createFramalabClient } from "@framalab/sdk"
+import { createFramalabClient } from "@dcmx-studio/framalab-sdk"
 
 const client = createFramalabClient({
   baseUrl: import.meta.env.FRAMALAB_URL,
@@ -61,7 +61,7 @@ const [project, photos] = await Promise.all([
 
 ```astro src/pages/collections/[id].astro
 ---
-import { createFramalabClient } from "@framalab/sdk"
+import { createFramalabClient } from "@dcmx-studio/framalab-sdk"
 
 export async function getStaticPaths() {
   const client = createFramalabClient({

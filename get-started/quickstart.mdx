@@ -11,19 +11,17 @@ description: "Fetch your first photo in under 5 minutes."
 ## 1. Install
 
 <CodeGroup>
-
 ```bash pnpm
-pnpm add @framalab/sdk
+pnpm add @dcmx-studio/framalab-sdk
 ```
 
 ```bash npm
-npm install @framalab/sdk
+npm install @dcmx-studio/framalab-sdk
 ```
 
 ```bash yarn
-yarn add @framalab/sdk
+yarn add @dcmx-studio/framalab-sdk
 ```
-
 </CodeGroup>
 
 ## 2. Initialize the client
@@ -36,7 +34,7 @@ FRAMALAB_TOKEN=your-gallery-token
 ```
 
 ```ts client.ts
-import { createFramalabClient } from "@framalab/sdk"
+import { createFramalabClient } from "@dcmx-studio/framalab-sdk"
 
 const client = createFramalabClient({
   baseUrl: process.env.FRAMALAB_URL!,
@@ -68,7 +66,7 @@ for (const photo of photos) {
   <div id="gallery"></div>
 
   <script type="module">
-    import { createFramalabClient } from "@framalab/sdk"
+    import { createFramalabClient } from "@dcmx-studio/framalab-sdk"
 
     const client = createFramalabClient({
       baseUrl: "https://panel.yourdomain.com",
@@ -102,11 +100,9 @@ for (const photo of photos) {
   <Card title="Photo Versions" icon="images" href="/concepts/photo-versions">
     thumb vs medium vs full — when to use each
   </Card>
-
   <Card title="getMediaUrl" icon="wand-magic-sparkles" href="/sdk/get-media-url">
     Custom resize, format, and quality transforms
   </Card>
-
   <Card title="Error Handling" icon="triangle-exclamation" href="/concepts/error-handling">
     Handle auth and server errors gracefully
   </Card>

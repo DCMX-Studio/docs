@@ -1,5 +1,5 @@
 ---
-title: "Get photos"
+title: "getPhotos"
 description: "Fetch all approved photos in the project."
 ---
 
@@ -41,10 +41,10 @@ interface GalleryPhotoVersion {
 ## Version types
 
 | `versionType` | Max dimension | Best for |
-| --- | --- | --- |
-| `webp_thumb` | 400px wide | Grid thumbnails, cards |
-| `webp_medium` | 1200px wide | Detail views, lightbox |
-| `webp_full` | 2400px wide | Downloads, large displays |
+|---------------|---------------|----------|
+| `webp_thumb`  | 400px wide    | Grid thumbnails, cards |
+| `webp_medium` | 1200px wide   | Detail views, lightbox |
+| `webp_full`   | 2400px wide   | Downloads, large displays |
 
 See [Photo Versions](/concepts/photo-versions) for the full guide.
 
@@ -70,6 +70,6 @@ function getLightboxUrl(photo: GalleryPhoto): string {
 ## Errors
 
 | Status | Code | Cause |
-| --- | --- | --- |
+|--------|------|-------|
 | 401 | `UNAUTHORIZED` | Token missing, invalid, revoked, or expired |
 | 500 | `INTERNAL_ERROR` | Server error |

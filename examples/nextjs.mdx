@@ -6,7 +6,7 @@ description: "Full gallery implementation with Next.js 14+ Server Components."
 ## Setup
 
 ```bash terminal
-pnpm add @framalab/sdk
+pnpm add @dcmx-studio/framalab-sdk
 ```
 
 ```env .env.local
@@ -17,7 +17,7 @@ FRAMALAB_TOKEN=your-gallery-token
 ## Singleton client
 
 ```ts lib/framalab.ts
-import { createFramalabClient } from "@framalab/sdk"
+import { createFramalabClient } from "@dcmx-studio/framalab-sdk"
 
 export const framalab = createFramalabClient({
   baseUrl: process.env.FRAMALAB_URL!,
@@ -92,7 +92,7 @@ export default async function CollectionsPage() {
 
 ```tsx app/gallery/collections/[id]/page.tsx
 import { framalab } from "@/lib/framalab"
-import { FramalabError } from "@framalab/sdk"
+import { FramalabError } from "@dcmx-studio/framalab-sdk"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 

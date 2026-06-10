@@ -8,6 +8,19 @@
     "dark": "#0D0D1A"
   },
   "favicon": "https://icons.duckduckgo.com/ip3/framalab.dcmxstudio.com.ico",
+  "navbar": {
+    "links": [
+      {
+        "href": "mailto:support@dcmxstudio.com",
+        "label": "Support"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Go to Framalab",
+      "href": "https://framalab.dcmxstudio.com"
+    }
+  },
   "navigation": {
     "tabs": [
       {
@@ -48,18 +61,5 @@
         ]
       }
     ]
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:support@dcmxstudio.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Go to Framalab",
-      "href": "https://framalab.dcmxstudio.com"
-    }
   }
 }
