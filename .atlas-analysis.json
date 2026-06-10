@@ -1,7 +1,7 @@
 {
   "projectType": "saas",
   "projectName": "Framalab",
-  "projectDescription": "Framalab is a creative SaaS platform that lets users access and manage design projects through a seamless, passwordless login experience.",
+  "projectDescription": "Framalab is a photographer management platform. Photographers upload and curate photos in the panel; clients review and select them; the approved work is delivered through a public Gallery API consumed via the SDK.",
   "theme": "almond",
   "primaryColor": "#1A1A2E",
   "lightColor": "#4F4FBF",
@@ -14,33 +14,33 @@
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "quickstart",
-              "account-setup"
+              "get-started/introduction",
+              "get-started/quickstart"
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "SDK Reference",
             "pages": [
-              "concepts/workspace",
-              "concepts/projects",
-              "concepts/collaboration"
+              "sdk/create-framalab-client",
+              "sdk/get-project",
+              "sdk/get-photos",
+              "sdk/get-collections",
+              "sdk/get-media-url"
             ]
           },
           {
-            "group": "Guides",
+            "group": "Concepts",
             "pages": [
-              "guides/creating-a-project",
-              "guides/sharing-and-permissions",
-              "guides/exporting-assets",
-              "guides/managing-your-account"
+              "concepts/authentication",
+              "concepts/photo-versions",
+              "concepts/error-handling"
             ]
           },
           {
-            "group": "Support",
+            "group": "Examples",
             "pages": [
-              "faq",
-              "troubleshooting"
+              "examples/nextjs",
+              "examples/astro"
             ]
           }
         ]
@@ -48,11 +48,19 @@
     ]
   },
   "keyFeatures": [
-    "Passwordless magic-link authentication",
-    "Project and asset management",
-    "Team collaboration and sharing",
-    "Asset export and delivery",
-    "Workspace organization"
+    "Gallery token authentication",
+    "Fetch approved photos with pre-generated WebP versions",
+    "Browse and filter photo collections",
+    "On-demand image transforms (resize, format, quality)",
+    "Zero-dependency TypeScript client"
   ],
-  "publicApiSurface": []
+  "publicApiSurface": [
+    "createFramalabClient",
+    "getProject",
+    "getPhotos",
+    "getCollections",
+    "getCollection",
+    "getMediaUrl",
+    "FramalabError"
+  ]
 }
